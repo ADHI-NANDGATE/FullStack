@@ -120,65 +120,19 @@ class _LandingPageState extends State<LandingPage>
               ),
             ],
           ),
-          if (isDesktop) ...[
-            Row(
-              children: [
-                _buildNavItem('Home'),
-                _buildNavItem('Products'),
-                _buildNavItem('About'),
-                _buildNavItem('Contact'),
-                const SizedBox(width: 20),
-                _buildLoginButton(),
-              ],
-            ),
-          ] 
+         
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: TextButton(
-        onPressed: () {},
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoginButton() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
-      ),
-      child: TextButton(
-        onPressed: () {},
-        child: const Text(
-          'Sign In',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
+ 
 
   Widget _buildHeroSection(double screenWidth, double screenHeight, bool isDesktop, bool isTablet) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: screenWidth * 0.05,
-        vertical: isDesktop ? 40 : 60,
+        vertical: isDesktop ? 80 : 60,
       ),
       child: _animationsInitialized
           ? FadeTransition(
@@ -195,15 +149,12 @@ class _LandingPageState extends State<LandingPage>
                             child: _buildHeroContent(screenWidth, isDesktop),
                           ),
                           const SizedBox(width: 60),
-                          Expanded(
-                            flex: 1,
-                            child: _buildHeroImage(),
-                          ),
+                         
                         ],
                       ),
                     ] else ...[
                       _buildHeroContent(screenWidth, isDesktop),
-                    
+                     
                     ],
                   ],
                 ),
@@ -219,16 +170,13 @@ class _LandingPageState extends State<LandingPage>
                         child: _buildHeroContent(screenWidth, isDesktop),
                       ),
                       const SizedBox(width: 60),
-                      Expanded(
-                        flex: 1,
-                        child: _buildHeroImage(),
-                      ),
+                     
                     ],
                   ),
                 ] else ...[
                   _buildHeroContent(screenWidth, isDesktop),
                   const SizedBox(height: 40),
-                  _buildHeroImage(),
+                  // _buildHeroImage(),
                 ],
               ],
             ),
@@ -270,43 +218,7 @@ class _LandingPageState extends State<LandingPage>
     );
   }
 
-  Widget _buildHeroImage() {
-    return Container(
-      height: 300,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withOpacity(0.2),
-                Colors.white.withOpacity(0.1),
-              ],
-            ),
-          ),
-          child: const Center(
-            child: Icon(
-              Icons.shopping_bag,
-              size: 120,
-              color: Colors.white54,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildPrimaryButton(String text, IconData icon) {
     return Container(
@@ -348,38 +260,12 @@ class _LandingPageState extends State<LandingPage>
     );
   }
 
-  Widget _buildSecondaryButton(String text) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white.withOpacity(0.3)),
-      ),
-      child: TextButton(
-        onPressed: () {},
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
-        ),
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildFeaturesSection(double screenWidth, bool isDesktop) {
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.05,
-        vertical: 80,
+        horizontal: isDesktop ? screenWidth * 0.05 : 0,
+        vertical: isDesktop ? 80 : 0,
       ),
       child: Column(
         children: [
