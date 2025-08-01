@@ -1,6 +1,7 @@
 
 const express = require('express');
 const mongoose = require('./database/db');
+const authRoutes = require('./routers/auth');
 
 const app = express();
 
@@ -9,10 +10,15 @@ const PORT = process.env.PORT || 3002;
 require('dotenv').config();
 
 
+// Routes
+app.use('/auth', authRoutes);
 
+// Test route
 app.get('/', (req, res) => {
-    res.send('Welcome to the E-commerce API');
+    res.send('Server is running');
 });
+
+
 
 app.listen(PORT, () => {        
     console.log(`Server is running on port ${PORT}`);
