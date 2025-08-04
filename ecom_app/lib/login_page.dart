@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:ecom_app/config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -635,52 +637,17 @@ class _LoginPageState extends State<LoginPage>
       _isLoading = false;
     });
 
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorResponse['message'] ?? 'Registration failed'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-      return;
-      
-    }
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
 
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Logged In Successfully!'),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
-
-    // Navigate to next screen or login
-    Navigator.pushNamed(context, '/home');
-    } catch (e) {
-        print('Error storing token: $e');
-    }
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    // Show success message
+     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
             const Icon(Icons.check_circle, color: Colors.white),
             const SizedBox(width: 12),
-            const Text('Login successful!'),
+            Text('Welcome, ${data['user']['name']}!'),
           ],
         ),
         backgroundColor: Colors.green,
@@ -692,8 +659,51 @@ class _LoginPageState extends State<LoginPage>
       ),
     );
 
+    // Store token or user data as needed
+    if (data['token'] != null) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('auth_token', data['token']);
+      log('Token stored: ${data['token']}');
+    } else {
+      log('No token found in response');
+    }
+
     // Navigate to home/dashboard
-    // Navigator.pushReplacementNamed(context, '/home');
+    if (!mounted) return;
+    Navigator.pushNamed(context, '/home');
+
+  
+    } else {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.error, color: Colors.white),
+            const SizedBox(width: 12),
+            Text('Login failed: ${response.body}'),
+          ],
+        ),
+        backgroundColor: Colors.redAccent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+   
+      
+    }
+    } catch (e) {
+        debugPrint('Error: $e');
+    }
+   
+
+    setState(() {
+      _isLoading = false;
+    });
+
   }
 
   void _handleForgotPassword() {
