@@ -602,10 +602,8 @@ class _RegisterPageState extends State<RegisterPage>
     );
   }
 
-  void _handleRegister() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  Future<void> _handleRegister() async {
+    if (!_formKey.currentState!.validate()) return;
 
     if (!_acceptTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -621,37 +619,46 @@ class _RegisterPageState extends State<RegisterPage>
       return;
     }
 
-    
-
     setState(() {
       _isLoading = true;
     });
 
-
-
-    // Simulate API call=
     try {
-       final response = await http.post(
-      Uri.parse('${AppConfig.apiUrl}/auth/login'),
-       headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'name': _nameController.text,
-        'email': _emailController.text,
-        'password': _passwordController.text.toString(),
-        'confirmPassword': _confirmPasswordController.text.toString(),
-      }),
-      
-    );
+      final response = await http.post(
+        Uri.parse('${AppConfig.apiUrl}/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'name': _nameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'password': _passwordController.text,
+          'confirmPassword': _confirmPasswordController.text,
+        }),
+      );
 
-        setState(() {
-      _isLoading = false;
-    });
-
-    if (response.statusCode != 200) {
-      final errorResponse = json.decode(response.body);
+      setState(() {
+        _isLoading = false;
+      });
+    
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Account created successfully!'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+        Navigator.pushNamed(context, '/login');
+      } 
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(errorResponse['message'] ?? 'Registration failed'),
+          content: const Text('An error occurred. Please try again.'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -659,26 +666,6 @@ class _RegisterPageState extends State<RegisterPage>
           ),
         ),
       );
-      return;
-      
-    }
-
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Account created successfully!'),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
-
-    // Navigate to next screen or login
-    Navigator.pushNamed(context, '/login');
-    } catch (e) {
-        print('Error storing token: $e');
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:ecom_app/home.dart';
 import 'package:ecom_app/landing_page.dart';
 import 'package:ecom_app/login_page.dart';
 import 'package:ecom_app/register_page.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/landing': (context) => const LandingPage(),
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
+        '/home': (context) => const Home(),
       },
     );
   }
