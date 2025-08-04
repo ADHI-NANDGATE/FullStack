@@ -18,6 +18,11 @@ class _HomeState extends State<Home> {
   final PageController _pageController = PageController();
   int _currentBannerIndex = 0;
 
+    // Add these variables to store product data
+      List<dynamic> allProducts = [];
+      bool isLoading = true;
+      String? errorMessage;
+
   // Sample data - replace with your actual data
   final List<String> bannerImages = [
     'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800',
@@ -62,20 +67,41 @@ class _HomeState extends State<Home> {
 
   // All Products
   Future<void> _fetchAllProducts() async {
-try {
-  final response =await http.get(
-      Uri.parse('${AppConfig.apiUrl}/products'),
-       headers: {'Content-Type': 'application/json'});
-    log('Response status: ${response.body}');
-  if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body);
-    // Process the product data
-  } else {
-    print('Failed to load products');
-  }
-} catch (e) {
-  print('Error fetching products: $e');
-}
+    try {
+      setState(() {
+        isLoading = true;
+        errorMessage = null;
+      });
+      
+      final response = await http.get(
+        Uri.parse('${AppConfig.apiUrl}/products'),
+        headers: {'Content-Type': 'application/json'},
+      );
+      
+      log('Response status: ${response.statusCode}');
+      log('Response body: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          allProducts = data;
+          isLoading = false;
+        });
+        log('Products loaded: ${allProducts.length}');
+      } else {
+        setState(() {
+          errorMessage = 'Failed to load products: ${response.statusCode}';
+          isLoading = false;
+        });
+        print('Failed to load products: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error fetching products: $e';
+        isLoading = false;
+      });
+      print('Error fetching products: $e');
+    }
   }
 
   @override
@@ -91,6 +117,7 @@ try {
         onRefresh: () async {
           // Add refresh logic here
           await Future.delayed(const Duration(seconds: 1));
+           await _fetchAllProducts();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -373,18 +400,37 @@ try {
         ),
         SizedBox(
           height: 350,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: 5, // Show 5 featured products
-            itemBuilder: (context, index) {
-              return Container(
-                width: 280,
-                margin: const EdgeInsets.only(right: 16),
-                child: const ProductCard(),
-              );
-            },
-          ),
+          child: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : errorMessage != null
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(errorMessage!),
+                          ElevatedButton(
+                            onPressed: _fetchAllProducts,
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : allProducts.isEmpty
+                      ? const Center(child: Text('No products available'))
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: allProducts.length > 5 ? 5 : allProducts.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              width: 280,
+                              margin: const EdgeInsets.only(right: 16),
+                              child: ProductCard(
+                                product: allProducts[index],
+                              ),
+                            );
+                          },
+                        ),
         ),
       ],
     );
@@ -422,20 +468,48 @@ try {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: 6, // Show 6 popular products
-            itemBuilder: (context, index) {
-              return const ProductCard();
-            },
-          ),
+          child: isLoading
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(50),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : errorMessage != null
+                  ? Center(
+                      child: Column(
+                        children: [
+                          Text(errorMessage!),
+                          ElevatedButton(
+                            onPressed: _fetchAllProducts,
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
+                    )
+                  : allProducts.isEmpty
+                      ? const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(50),
+                            child: Text('No products available'),
+                          ),
+                        )
+                      : GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: crossAxisCount,
+                            childAspectRatio: 0.7,
+                            crossAxisSpacing: 16,
+                            mainAxisSpacing: 16,
+                          ),
+                          itemCount: allProducts.length > 6 ? 6 : allProducts.length,
+                          itemBuilder: (context, index) {
+                            return ProductCard(
+                              product: allProducts[index],
+                            );
+                          },
+                        ),
         ),
       ],
     );
