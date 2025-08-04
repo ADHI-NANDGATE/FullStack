@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:ecom_app/config.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -617,16 +621,47 @@ class _RegisterPageState extends State<RegisterPage>
       return;
     }
 
+    
+
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate API call
-    await Future.delayed(const Duration(seconds: 2));
 
-    setState(() {
+
+    // Simulate API call=
+    try {
+       final response = await http.post(
+      Uri.parse('${AppConfig.apiUrl}/auth/login'),
+       headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text.toString(),
+        'confirmPassword': _confirmPasswordController.text.toString(),
+      }),
+      
+    );
+
+        setState(() {
       _isLoading = false;
     });
+
+    if (response.statusCode != 200) {
+      final errorResponse = json.decode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorResponse['message'] ?? 'Registration failed'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+      
+    }
 
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
@@ -641,7 +676,10 @@ class _RegisterPageState extends State<RegisterPage>
     );
 
     // Navigate to next screen or login
-    // Navigator.pushReplacementNamed(context, '/login');
+    Navigator.pushNamed(context, '/login');
+    } catch (e) {
+        print('Error storing token: $e');
+    }
   }
 
   void _handleSocialLogin(String provider) {
