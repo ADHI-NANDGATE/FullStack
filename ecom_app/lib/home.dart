@@ -8,6 +8,7 @@ import 'package:ecom_app/config.dart';
 import 'package:ecom_app/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -45,6 +46,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _fetchAllProducts();
+    _loadIsAdmin();
     // Auto-scroll banner
     Future.delayed(const Duration(seconds: 3), () {
       _autoScrollBanner();
@@ -106,6 +108,21 @@ class _HomeState extends State<Home> {
     }
   }
 
+  bool isAdmin = false;
+
+
+
+  Future<void> _loadIsAdmin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isAdminString = prefs.getString('is_admin');
+    if (isAdminString != null) {
+      setState(() {
+        isAdmin = isAdminString.toLowerCase() == 'true';
+      });
+      log('Is admin string: $isAdmin');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -115,7 +132,9 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: CustomAppBar(),
       bottomNavigationBar: const CustomBottomBar(currentIndex: 0),
-      drawer: CustomDrawer(),
+      drawer: isAdmin
+          ? CustomDrawer()
+          : null,
       backgroundColor: Colors.grey[50],
       body: RefreshIndicator(
         onRefresh: () async {

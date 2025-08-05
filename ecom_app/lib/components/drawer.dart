@@ -34,7 +34,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.store_mall_directory),
+            leading: const Icon(Icons.store),
             title: const Text('All Products'),
             onTap: () {
               Navigator.pushNamed(context, '/products');

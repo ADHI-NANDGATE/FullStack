@@ -663,6 +663,8 @@ class _LoginPageState extends State<LoginPage>
     if (data['token'] != null) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('auth_token', data['token']);
+      await prefs.setString('is_admin', data['user']['isAdmin'].toString());
+      log('User is admin: ${data['user']['isAdmin']}');
       log('Token stored: ${data['token']}');
     } else {
       log('No token found in response');
