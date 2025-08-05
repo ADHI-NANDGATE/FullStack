@@ -1,6 +1,7 @@
 import 'package:ecom_app/home.dart';
 import 'package:ecom_app/landing_page.dart';
 import 'package:ecom_app/login_page.dart';
+import 'package:ecom_app/profile.dart';
 import 'package:ecom_app/register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,6 +50,7 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const Home(),
+        '/profile':(context) => const Profile()
       },
     );
   }

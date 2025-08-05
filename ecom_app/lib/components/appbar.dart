@@ -1,4 +1,6 @@
+import 'package:ecom_app/util/deletedialog.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -9,6 +11,30 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   @override
   State<CustomAppBar> createState() => _CustomAppBarState();
 }
+
+
+Future<void> showLogoutDialog(BuildContext context) async {
+    showDialog(
+    context: context,
+    builder: (context) {
+      return DialogBox(
+        onSave: () {
+          logout(context);
+        },
+        onCancel: () {
+          Navigator.of(context).pop();
+        },
+        );
+    }
+  ); 
+}
+
+Future<void> logout(context) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('auth_token');
+  Navigator.pushNamed(context, '/login');
+}
+
 
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
@@ -21,6 +47,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
           onPressed: () {
             Navigator.pushNamed(context, '/cart');
           },
+        ),
+        IconButton(
+          icon: const Icon(Icons.person),
+          onPressed: () {
+            Navigator.pushNamed(context, '/profile');
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.logout_rounded),
+          onPressed: () => showLogoutDialog(context),
         ),
       ],
     );
