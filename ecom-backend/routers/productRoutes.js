@@ -7,8 +7,8 @@ const { addProduct, deleteProduct } = productController;
 
 
 // Admin routes for product management
-router.post('/add',  isAdmin, addProduct);
-router.delete('/:productId',  isAdmin, deleteProduct);
+router.post('/add',   addProduct);
+router.delete('/:productId',   deleteProduct);
 
 // Public routes for product retrieval
 router.get('/', productController.getAllProducts);
