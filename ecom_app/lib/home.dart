@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:ecom_app/components/appbar.dart';
 import 'package:ecom_app/components/bottom_bar.dart';
+import 'package:ecom_app/components/drawer.dart';
 import 'package:ecom_app/config.dart';
 import 'package:ecom_app/product_card.dart';
 import 'package:flutter/material.dart';
@@ -114,6 +115,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: CustomAppBar(),
       bottomNavigationBar: const CustomBottomBar(currentIndex: 0),
+      drawer: CustomDrawer(),
       backgroundColor: Colors.grey[50],
       body: RefreshIndicator(
         onRefresh: () async {

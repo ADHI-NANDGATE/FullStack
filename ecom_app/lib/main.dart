@@ -1,3 +1,4 @@
+import 'package:ecom_app/all_products.dart';
 import 'package:ecom_app/home.dart';
 import 'package:ecom_app/landing_page.dart';
 import 'package:ecom_app/login_page.dart';
@@ -50,7 +51,8 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const Home(),
-        '/profile':(context) => const Profile()
+        '/profile':(context) => const Profile(),
+        '/products':(context) => const AllProducts(),
       },
     );
   }
