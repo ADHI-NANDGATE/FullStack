@@ -56,12 +56,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
           },
         ),
         IconButton(
-          icon: const Icon(Icons.person),
-          onPressed: () {
-            Navigator.pushNamed(context, '/profile');
-          },
-        ),
-        IconButton(
           icon: const Icon(Icons.logout_rounded),
           onPressed: () => showLogoutDialog(context),
         ),
