@@ -33,6 +33,13 @@ Future<void> logout(context) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove('auth_token');
   Navigator.pushNamed(context, '/login');
+  // show a snackbar or toast message if needed
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text('Logged out successfully'),
+      duration: Duration(seconds: 2),
+    ),
+  );
 }
 
 
