@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ecom_app/config.dart';
 import 'package:ecom_app/product_card.dart';
+import 'package:ecom_app/util/addProductdialog.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -11,6 +12,7 @@ class AllProducts extends StatefulWidget {
   @override
   State<AllProducts> createState() => _AllProductsState();
 }
+
 
 class _AllProductsState extends State<AllProducts> {
   @override
@@ -24,6 +26,7 @@ class _AllProductsState extends State<AllProducts> {
   bool isLoading = true;
   String? errorMessage;
 
+  // Fetch all products from the API
   Future<void> _fetchAllProducts() async {
     try {
       setState(() {
@@ -58,9 +61,21 @@ class _AllProductsState extends State<AllProducts> {
     }
   }
 
+  // Show a dialog to add a new product
+  Future<void> showAddProductDialog() async {
+      showDialog(
+    context: context,
+    builder: (context) {
+      return Addproduct(
+      );
+    }
+  ); 
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('All Products'),
         backgroundColor: Colors.blue,
@@ -84,9 +99,7 @@ class _AllProductsState extends State<AllProducts> {
                   ),
                   const Spacer(),
                   ElevatedButton(
-                    onPressed: () {
-                      // Add functionality to add a new product
-                    },
+                    onPressed:showAddProductDialog,
                     child: const Text('Add Product'),
                   ),
                 ],
